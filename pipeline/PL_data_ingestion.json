@@ -1,0 +1,295 @@
+{
+	"name": "PL_data_ingestion",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup_ingestion_configtable",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT * FROM metadata.ingestion_configuration WHERE \nis_run = 1;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_ingestion_config_table",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "For Each Record",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup_ingestion_configtable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup_ingestion_configtable').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Switch_resources",
+							"type": "Switch",
+							"dependsOn": [
+								{
+									"activity": "Set container name",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Set path name",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Set sink container name",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Set sink path",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"on": {
+									"value": "@item().source_name",
+									"type": "Expression"
+								},
+								"cases": [
+									{
+										"value": "adls",
+										"activities": [
+											{
+												"name": "Copy file from adls",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [
+													{
+														"name": "Source",
+														"value": "@{variables('container_name')}/@{variables('source path')}/*.csv"
+													},
+													{
+														"name": "Destination",
+														"value": "@{variables('target container name')}/@{variables('sink target path')}/"
+													}
+												],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "DelimitedTextSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "DelimitedTextWriteSettings",
+															"quoteAllText": true,
+															"fileExtension": ".txt"
+														}
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "DS_source_adls",
+														"type": "DatasetReference",
+														"parameters": {
+															"param_container": {
+																"value": "@variables('container_name')",
+																"type": "Expression"
+															},
+															"param_path": {
+																"value": "@variables('source path')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DS_sink_adls",
+														"type": "DatasetReference",
+														"parameters": {
+															"param_container": {
+																"value": "@variables('target container name')",
+																"type": "Expression"
+															},
+															"param_path": {
+																"value": "@variables('sink target path')",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
+									},
+									{
+										"value": "sql_db",
+										"activities": [
+											{
+												"name": "Execute_copy_from_azuresql",
+												"type": "ExecutePipeline",
+												"dependsOn": [],
+												"policy": {
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"pipeline": {
+														"referenceName": "PL_copy_from_azureSQL",
+														"type": "PipelineReference"
+													},
+													"waitOnCompletion": true
+												}
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							"name": "Set container name",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "container_name",
+								"value": {
+									"value": "@item().source_container_name",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set path name",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "source path",
+								"value": {
+									"value": "@item().source_path",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set sink container name",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "target container name",
+								"value": {
+									"value": "@item().target_container_name",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set sink path",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "sink target path",
+								"value": {
+									"value": "@item().target_path",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"is_full_load": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"container_name": {
+				"type": "String"
+			},
+			"source path": {
+				"type": "String"
+			},
+			"target container name": {
+				"type": "String"
+			},
+			"sink target path": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
