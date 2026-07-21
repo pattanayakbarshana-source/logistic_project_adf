@@ -1,0 +1,10 @@
+{
+	"name": "logistic_kv_ls",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://logistickeyvaultbarsha.vault.azure.net/"
+		}
+	}
+}
