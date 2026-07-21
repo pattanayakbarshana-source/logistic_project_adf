@@ -1,0 +1,15 @@
+{
+	"name": "project-ADF-logistics",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "b2e6f2d7-b984-441b-ac4a-b25078190326",
+		"tenantId": "dd6e396a-c0aa-42c0-97e7-b2d798dfd688"
+	}
+}
