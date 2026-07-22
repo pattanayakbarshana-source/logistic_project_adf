@@ -64,6 +64,8 @@
 											{
 												"name": "Execute PL_copy_from_adls",
 												"type": "ExecutePipeline",
+												"state": "Inactive",
+												"onInactiveMarkAs": "Succeeded",
 												"dependsOn": [],
 												"policy": {
 													"secureInput": false
@@ -76,15 +78,6 @@
 													},
 													"waitOnCompletion": true
 												}
-											},
-											{
-												"name": "adls_wait",
-												"type": "Wait",
-												"dependsOn": [],
-												"userProperties": [],
-												"typeProperties": {
-													"waitTimeInSeconds": 5
-												}
 											}
 										]
 									},
@@ -94,6 +87,8 @@
 											{
 												"name": "PL_copy_from_AzureSQL",
 												"type": "ExecutePipeline",
+												"state": "Inactive",
+												"onInactiveMarkAs": "Succeeded",
 												"dependsOn": [],
 												"policy": {
 													"secureInput": false
@@ -106,15 +101,6 @@
 													},
 													"waitOnCompletion": true
 												}
-											},
-											{
-												"name": "sql wait",
-												"type": "Wait",
-												"dependsOn": [],
-												"userProperties": [],
-												"typeProperties": {
-													"waitTimeInSeconds": 5
-												}
 											}
 										]
 									}
@@ -125,25 +111,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"is_full_load": {
-				"type": "string"
-			}
-		},
-		"variables": {
-			"container_name": {
-				"type": "String"
-			},
-			"source path": {
-				"type": "String"
-			},
-			"target container name": {
-				"type": "String"
-			},
-			"sink target path": {
-				"type": "String"
-			}
-		},
 		"annotations": []
 	}
 }
