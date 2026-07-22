@@ -61,11 +61,11 @@
 							"userProperties": [
 								{
 									"name": "Source",
-									"value": "@{variables('container_name')}/@{variables('source path')}/*.csv"
+									"value": "@{item().source_container_name}/@{item().source_path}/*.csv"
 								},
 								{
 									"name": "Destination",
-									"value": "@{variables('target container name')}/@{variables('sink target path')}/"
+									"value": "@{item().target_container_name}/@{concat(item().target_path,formatDateTime(utcNow(),'yyyy/MM/dd'))}/@{concat(item().target_file_name,'.csv')}"
 								}
 							],
 							"typeProperties": {

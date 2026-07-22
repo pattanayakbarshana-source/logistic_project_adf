@@ -64,8 +64,6 @@
 											{
 												"name": "Execute PL_copy_from_adls",
 												"type": "ExecutePipeline",
-												"state": "Inactive",
-												"onInactiveMarkAs": "Succeeded",
 												"dependsOn": [],
 												"policy": {
 													"secureInput": false
@@ -87,8 +85,6 @@
 											{
 												"name": "PL_copy_from_AzureSQL",
 												"type": "ExecutePipeline",
-												"state": "Inactive",
-												"onInactiveMarkAs": "Succeeded",
 												"dependsOn": [],
 												"policy": {
 													"secureInput": false
