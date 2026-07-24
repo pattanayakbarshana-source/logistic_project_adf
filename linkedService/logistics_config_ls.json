@@ -1,0 +1,23 @@
+{
+	"name": "logistics_config_ls",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "projectserverlogistics.database.windows.net",
+			"database": "logistic_db",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "avd",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "logistic_kv_ls",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "clientdbpwd"
+			}
+		}
+	}
+}

@@ -1,0 +1,78 @@
+{
+	"name": "DS_ingestion_config_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "logistics_config_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "is_run",
+				"type": "bit"
+			},
+			{
+				"name": "is_processed",
+				"type": "bit"
+			},
+			{
+				"name": "source_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "server_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "database_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "source_container_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "source_file_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "source_path",
+				"type": "nvarchar"
+			},
+			{
+				"name": "target_container_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "target_file_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "target_path",
+				"type": "nvarchar"
+			},
+			{
+				"name": "is_full_load",
+				"type": "bit"
+			},
+			{
+				"name": "load_indentifier_column",
+				"type": "nvarchar"
+			},
+			{
+				"name": "load_identifier_value",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "metadata",
+			"table": "ingestion_configuration"
+		}
+	}
+}

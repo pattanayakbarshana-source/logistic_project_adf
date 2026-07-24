@@ -1,0 +1,153 @@
+{
+	"name": "PL_copy_from_adls",
+	"properties": {
+		"activities": [
+			{
+				"name": "get config table data from adls",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "logistics_config_ls",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "SELECT * FROM metadata.ingestion_configuration WHERE is_run = 1 AND source_name = 'adls';"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "For each record",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "get config table data from adls",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('get config table data from adls').output.resultSets[0].rows",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Copy file from adls",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{item().source_container_name}/@{item().source_path}/*.csv"
+								},
+								{
+									"name": "Destination",
+									"value": "@{item().target_container_name}/@{concat(item().target_path,formatDateTime(utcNow(),'yyyy/MM/dd'))}/@{concat(item().target_file_name,'.csv')}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"wildcardFileName": "*",
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_source_adls",
+									"type": "DatasetReference",
+									"parameters": {
+										"param_container": {
+											"value": "@item().source_container_name",
+											"type": "Expression"
+										},
+										"param_path": {
+											"value": "@item().source_path",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_sink_adls",
+									"type": "DatasetReference",
+									"parameters": {
+										"param_container": {
+											"value": "@item().target_container_name",
+											"type": "Expression"
+										},
+										"param_path": {
+											"value": "@item().target_path",
+											"type": "Expression"
+										},
+										"file_name": {
+											"value": "@item().target_file_name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"x": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}

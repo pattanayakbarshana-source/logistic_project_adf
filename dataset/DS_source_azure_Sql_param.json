@@ -1,0 +1,40 @@
+{
+	"name": "DS_source_azure_Sql_param",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqldb_ls",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ls_param_dbserver": {
+					"value": "@dataset().param_server_name",
+					"type": "Expression"
+				},
+				"ls_param_db": {
+					"value": "@dataset().param_database_name",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"param_server_name": {
+				"type": "string"
+			},
+			"param_database_name": {
+				"type": "string"
+			},
+			"param_table": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().param_table",
+				"type": "Expression"
+			}
+		}
+	}
+}
