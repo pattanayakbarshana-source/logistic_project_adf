@@ -1,0 +1,105 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "project-ADF-logistics"
+		},
+		"logistic_adls_ls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'logistic_adls_ls'"
+		},
+		"AzureSqldb_ls_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ls_param_dbserver}"
+		},
+		"AzureSqldb_ls_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ls_param_db}"
+		},
+		"AzureSqldb_ls_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "avd"
+		},
+		"logistic_adls_ls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://logisticadlsprojectsa.dfs.core.windows.net/"
+		},
+		"logistic_kv_ls_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://logistickeyvaultbarsha.vault.azure.net/"
+		},
+		"logistics_config_ls_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "projectserverlogistics.database.windows.net"
+		},
+		"logistics_config_ls_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "logistic_db"
+		},
+		"logistics_config_ls_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "avd"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "project-ADF-logistics_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"logistic_adls_ls_accountKey": {
+						"value": "[parameters('logistic_adls_ls_accountKey')]"
+					},
+					"logistic_adls_ls_properties_typeProperties_url": {
+						"value": "[parameters('logistic_adls_ls_properties_typeProperties_url')]"
+					},
+					"logistic_kv_ls_properties_typeProperties_baseUrl": {
+						"value": "[parameters('logistic_kv_ls_properties_typeProperties_baseUrl')]"
+					},
+					"AzureSqldb_ls_properties_typeProperties_server": {
+						"value": "[parameters('AzureSqldb_ls_properties_typeProperties_server')]"
+					},
+					"AzureSqldb_ls_properties_typeProperties_database": {
+						"value": "[parameters('AzureSqldb_ls_properties_typeProperties_database')]"
+					},
+					"AzureSqldb_ls_properties_typeProperties_userName": {
+						"value": "[parameters('AzureSqldb_ls_properties_typeProperties_userName')]"
+					},
+					"logistics_config_ls_properties_typeProperties_server": {
+						"value": "[parameters('logistics_config_ls_properties_typeProperties_server')]"
+					},
+					"logistics_config_ls_properties_typeProperties_database": {
+						"value": "[parameters('logistics_config_ls_properties_typeProperties_database')]"
+					},
+					"logistics_config_ls_properties_typeProperties_userName": {
+						"value": "[parameters('logistics_config_ls_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

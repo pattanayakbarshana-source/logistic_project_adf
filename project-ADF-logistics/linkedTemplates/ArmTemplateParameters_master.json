@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "project-ADF-logistics"
+		},
+		"logistic_adls_ls_accountKey": {
+			"value": ""
+		},
+		"AzureSqldb_ls_properties_typeProperties_server": {
+			"value": "@{linkedService().ls_param_dbserver}"
+		},
+		"AzureSqldb_ls_properties_typeProperties_database": {
+			"value": "@{linkedService().ls_param_db}"
+		},
+		"AzureSqldb_ls_properties_typeProperties_userName": {
+			"value": "avd"
+		},
+		"logistic_adls_ls_properties_typeProperties_url": {
+			"value": "https://logisticadlsprojectsa.dfs.core.windows.net/"
+		},
+		"logistic_kv_ls_properties_typeProperties_baseUrl": {
+			"value": "https://logistickeyvaultbarsha.vault.azure.net/"
+		},
+		"logistics_config_ls_properties_typeProperties_server": {
+			"value": "projectserverlogistics.database.windows.net"
+		},
+		"logistics_config_ls_properties_typeProperties_database": {
+			"value": "logistic_db"
+		},
+		"logistics_config_ls_properties_typeProperties_userName": {
+			"value": "avd"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
